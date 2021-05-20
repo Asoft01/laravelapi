@@ -23,6 +23,9 @@ Route::namespace('App\Http\Controllers')->group(function(){
     Route::get('users/{id?}', 'APIController@getUsers');
 
     Route::post('add-users', 'APIController@addUsers');
+
+    // POST API - Add multiple users
+    Route::post('add-multiple-users', 'APIController@addMultipleUsers');
 });
 
 // Route::get('users', 'App\Http\Controllers\APIController@getUsers');
