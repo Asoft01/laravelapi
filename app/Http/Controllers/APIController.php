@@ -135,4 +135,98 @@ class APIController extends Controller
             return response()->json(['message'=> 'Users added successfully'], 201);
         }
     }
+
+    public function updateUserDetails(Request $request, $id){
+        if($request->isMethod('put')){
+            $userData = $request->input();
+            // echo "<pre>"; print_r($userData); die;
+            
+            $rules = [
+                "name" => "required|regex:/^[\pL\s\-]+$/u",
+                "email" => "required|email|unique:users", 
+                "password" => "required"
+            ];
+
+            $customMessages = [
+                'name.required'=> 'Name is required',
+                'email.required' => 'Email is required',
+                'email.email' => 'Valid Email is required',
+                'email.unique' => 'Email already exists in database', 
+                'password.required' => 'Password is required'
+            ];
+
+            $validator = Validator::make($userData, $rules, $customMessages);
+            if($validator->fails()){
+                return response()->json($validator->errors(), 422);
+            }
+
+            // $userData['id']
+            User::where('id', $id)->update(['name'=> $userData['name'], 'email'=> $userData['email'], 'password' => bcrypt($userData['password'])]);
+            return response()->json(['message' => "User details updated successfully"], 202);
+        }
+    }
+
+    public function updateUserName(Request $request, $id){
+        if($request->isMethod('patch')){
+            $userData = $request->input();
+            // echo "<pre>"; print_r($userData); die;
+            // User::where('id', $userData['id'])->update(['name' => $userData['name']]);
+
+            $rules = [
+                "name" => "required|regex:/^[\pL\s\-]+$/u"
+            ];
+
+            $customMessages = [
+                'name.required'=> 'Name is required'
+            ];
+
+            $validator = Validator::make($userData, $rules, $customMessages);
+            if($validator->fails()){
+                return response()->json($validator->errors(), 422);
+            }
+
+            User::where('id', $id)->update(['name' => $userData['name']]);
+            return response()->json(['message' => 'User details updated successfully'], 202);
+        }
+    }
+
+    public function deleteUser($id){
+        User::where('id', $id)->delete();
+        return response()->json(['message' => 'User deleted Successfully'], 202);
+    }
+
+    public function deleteUserWithJson(Request $request){
+        if($request->isMethod('delete')){
+            $userData = $request->all();
+            // echo "<pre>"; print_r($userData); die;
+            User::where('id', $userData['id'])->delete();
+            return response()->json(['message'=> 'User deleted Successfully'], 202);
+        }
+    }
+
+    public function deleteMultipleUsers($ids){
+        // echo $ids; die;
+        $ids = explode(",", $ids);
+        // echo "<pre>"; print_r($ids); die;
+        User::whereIn('id', $ids)->delete();
+        return response()->json(['message' => "Users deleted Successfully"], 202);
+    }
+
+    public function deleteMultipleUsersWithJson(Request $request){
+        if($request->isMethod('delete')){
+            $userData = $request->all();
+            // echo "<pre>"; print_r($userData); die;
+            
+            ////////////// First Method of deleting the multiple users 
+            // echo "<pre>"; print_r($userData['ids']); die;
+            // foreach ($userData as $key => $value) {
+            //     echo "<pre>"; print_r($value); die;
+            //     // User::where('id', $value)->delete();
+            // }
+
+            ///////////// Second Method of deleting the multiple users ///////////////////
+            User::whereIn('id', $userData['ids'])->delete();
+            return response()->json(['message'=> 'Users deleted successfully'], 202);
+        }
+    }
 }
