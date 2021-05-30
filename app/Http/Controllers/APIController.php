@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\User;
 use Validator;
 class APIController extends Controller
@@ -19,11 +20,27 @@ class APIController extends Controller
     public function getUsers($id= null){
        if(empty($id)){
            $users = User::get();
-           return response()->json(["users"=> $users]);
+           return response()->json(["users"=> $users], 200);
        }else{
            $users = User::find($id);
-           return response()->json(['users'=> $users]);
+           return response()->json(['users'=> $users], 200);
        }
+    }
+
+    public function getUsersList(Request $request){
+        $header = $request->header('Authorization');
+        if(empty($header)){
+            $message = "Header Authorization is missing!";
+            return response()->json(['status'=> false, 'message'=> $message], 422);
+        }else{
+            if($header == "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFtaXQgR3VwdGEiLCJpYXQiOjE1MTYyMzkwMjJ9.cNrgi6Sso9wvs4GlJmFnA4IqJY4o2QEcKXgshJTjfNg"){
+                $users = User::get();
+                return response()->json(["users"=> $users], 200);
+            }else{
+                $message = "Header Authorization is incorrect";
+                return response()->json(['status' => false, 'message'=> $message], 422);
+            }
+        }
     }
 
     public function addUsers(Request $request){
@@ -98,6 +115,89 @@ class APIController extends Controller
             $user->password= bcrypt($userData['email']);
             $user->save();
             return response()->json(['message'=> 'User added successfully'], 201);
+        }
+    }
+
+    public function loginUser(Request $request){
+        if($request->isMethod('post')){
+            $userData = $request->input();
+            // echo "<pre>"; print_r($userData); die;
+            
+            $rules = [
+                "email" => "required|email|exists:users", 
+                "password" => "required"
+            ];
+
+            $customMessages = [
+                'email.required' => 'Email is required',
+                'email.email' => 'Valid Email is required',
+                'email.unique' => 'Email does not exists in database', 
+                'password.required' => 'Password is required'
+            ];
+
+            $validator = Validator::make($userData, $rules, $customMessages);
+            if($validator->fails()){
+                return response()->json($validator->errors(), 422);
+            }
+
+            // Fetch User Details
+            $userDetails =  User::where('email', $userData['email'])->first();
+
+            // Verify the Password
+            if(password_verify($userData['password'], $userDetails->password)){
+                // echo "password match.. user can login"; die;
+                $apiToken = Str::random(60);
+
+                // Update Token
+                User::where('email', $userData['email'])->update(['api_token'=> $apiToken]);
+
+                return response()->json(['status'=> true, "message"=> "User logged in Successfully!", 'token'=> $apiToken], 201);
+            }else{
+                return response()->json(['status'=> false, "message"=> "Password is Incorrect"], 404);
+            }
+        }
+    }
+
+    public function registerUser(Request $request){
+        if($request->isMethod('post')){
+            $userData= $request->input();
+            // echo "<pre>"; print_r($userData); die;
+
+            // Generate Unique API / Access Token
+            $apiToken = Str::random(60);
+
+            $rules = [
+                "name" => "required|regex:/^[\pL\s\-]+$/u",
+                "email" => "required|email|unique:users", 
+                "password" => "required"
+            ];
+
+            $customMessages = [
+                'name.required'=> 'Name is required',
+                'email.required' => 'Email is required',
+                'email.email' => 'Valid Email is required',
+                'email.unique' => 'Email already exists in database', 
+                'password.required' => 'Password is required'
+            ];
+
+            $validator = Validator::make($userData, $rules, $customMessages);
+            if($validator->fails()){
+                return response()->json($validator->errors(), 422);
+            }
+
+            $user = new User;
+            $user->name = $userData['name'];
+            $user->email = $userData['email'];
+            $user->password = bcrypt($userData['password']);
+            $user->api_token = $apiToken;
+            $user->save();
+
+            return response()->json([
+                'status'=> true, 
+                'message'=> 'User Registered Successfully!',
+                'token' => $apiToken
+            ], 201);
+
         }
     }
 

@@ -1,3 +1,4 @@
+    
 <?php
 
 use Illuminate\Http\Request;
@@ -20,9 +21,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::namespace('App\Http\Controllers')->group(function(){
 
+    // GET API - Fetch one or more records
     Route::get('users/{id?}', 'APIController@getUsers');
 
+    // Secure Get API - Fetch one or more records
+    Route::post('users-list', 'APIController@getUsersList');
+
+    // POST API - Add Single users
     Route::post('add-users', 'APIController@addUsers');
+
+    // Register API - Register User with API Token
+    Route::post('register-user', 'APIController@registerUser');
+
+    // Login API - Login User and update / return API Token
+    Route::post('login-user', 'APIController@loginUser');
 
     // POST API - Add multiple users
     Route::post('add-multiple-users', 'APIController@addMultipleUsers');
