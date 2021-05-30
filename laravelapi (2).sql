@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 23, 2021 at 11:06 AM
+-- Generation Time: May 30, 2021 at 11:28 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.11
 
@@ -83,6 +83,7 @@ CREATE TABLE `users` (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `api_token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -91,11 +92,15 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'hamid', 'lekhad19@gmail.com', NULL, '$2y$10$lNp.7kFTb3vAPL4zFZcs3OdrSlazkhW7.wd5RLUiV4xyLPgRkl6Z6', NULL, NULL, NULL),
-(2, 'john', 'john@gmail.com', NULL, '$2y$10$eBgn9zsgpxtF/P4TsxJ0reORxgRzPElSj4lel.AR7G3ZCPnRjPdmW', NULL, NULL, NULL),
-(4, 'amit', 'amit@gmail.com', NULL, '$2y$10$n5p5kQh8b4JzOwGB2AkJmOTMwQ/DttR2q045TG7K/qqIdzcRrLLV2', NULL, '2021-05-13 19:21:16', '2021-05-13 19:21:16'),
-(5, 'wale', 'wale@gmail.com', NULL, '$2y$10$t/7vOR0/eJIbcBN9006GeuURJR52ndoUPfL5PhYngCZd6cng9DJia', NULL, '2021-05-13 19:27:02', '2021-05-13 19:27:02');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `api_token`, `created_at`, `updated_at`) VALUES
+(1, 'hamid', 'lekhad19@gmail.com', NULL, '$2y$10$lNp.7kFTb3vAPL4zFZcs3OdrSlazkhW7.wd5RLUiV4xyLPgRkl6Z6', NULL, '', NULL, NULL),
+(2, 'john', 'john@gmail.com', NULL, '$2y$10$eBgn9zsgpxtF/P4TsxJ0reORxgRzPElSj4lel.AR7G3ZCPnRjPdmW', NULL, '', NULL, NULL),
+(4, 'amit', 'amit@gmail.com', NULL, '$2y$10$n5p5kQh8b4JzOwGB2AkJmOTMwQ/DttR2q045TG7K/qqIdzcRrLLV2', NULL, '', '2021-05-13 19:21:16', '2021-05-13 19:21:16'),
+(5, 'wale', 'wale@gmail.com', NULL, '$2y$10$t/7vOR0/eJIbcBN9006GeuURJR52ndoUPfL5PhYngCZd6cng9DJia', NULL, '', '2021-05-13 19:27:02', '2021-05-13 19:27:02'),
+(18, 'amit', 'lekhad129@gmail.com', NULL, '$2y$10$4qj4yAXyh9ZyiurT7mV/GOKibqpPuI4vXNVhGGRM.cYsB3sX/Kp1G', NULL, 'zlqkH22Zn7si3bG1DjMlkgTujFm3Q383krwrHPKlW1Uz6ul1hLM4ECUIdn6l', '2021-05-28 03:34:10', '2021-05-30 08:07:52'),
+(19, 'wale', 'walex@gmail.com', NULL, '$2y$10$m6PkUPb4zCtMcZqrJ17UG.Ctq03DCBCazho96HfbiFOM4GzlTpK2e', NULL, 'gpDYY7Ezj6OryjdhtOVEp75JYQ37iTlpfRYLR0rwo4vKbBETsTSjpJv1dxmh', '2021-05-28 03:38:02', '2021-05-28 03:38:02'),
+(20, 'wale', 'walex1@gmail.com', NULL, '$2y$10$sEKnxSMxbr/dxslUtx.iBubCze9bZT5Db07vDpzpR1Yih8fNQRtqm', NULL, 'wUfuDLXCSnqarhQjueSuK4YSuG1p6hI0cFmbxwbIGWDsseCIxPrfGZwL0vlZ', '2021-05-28 03:39:56', '2021-05-28 03:39:56'),
+(21, 'wale', 'walex3@gmail.com', NULL, '$2y$10$ISrNe0c8TFGW1wPWOMwZg.LcB4FDfOUqcqB97Aw0Ndsr3LpGUZct.', NULL, 'JWzuyg57ydLFdoIxNqFtVhjJVCo0LbYSk57tgHrbnIwnuDRGZCt8DqWExoyz', '2021-05-30 07:39:58', '2021-05-30 07:39:58');
 
 --
 -- Indexes for dumped tables
@@ -147,7 +152,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
