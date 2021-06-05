@@ -201,6 +201,26 @@ class APIController extends Controller
         }
     }
 
+    public function logoutUser(Request $request){
+        $api_token = $request->header("Authorization");
+        if(empty($api_token)){
+            $message = "User Token is missing in API Header";
+            return response()->json(['status'=> false, 'message'=> $message], 422);
+        }else{
+            // echo "continue logout api";
+            // echo $api_token  = str_replace("Bearer ", "", $api_token); die;
+            $api_token = str_replace("Bearer ", "", $api_token); 
+            // echo $userCount = User::where('api_token', $api_token)->count(); die;
+            $userCount = User::where('api_token', $api_token)->count(); 
+            if($userCount > 0){
+                // Update User Token to Null
+                User::where('api_token', $api_token)->update(['api_token'=> NULL]);
+                $message = "User logged out successfully";
+                return response()->json(['status' => true, 'message'=> $message], 200);
+            }
+        }
+    }   
+
     public function addMultipleUsers(Request $request){
         if($request->isMethod('post')){
             $userData = $request->input();

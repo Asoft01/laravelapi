@@ -25,7 +25,7 @@ Route::namespace('App\Http\Controllers')->group(function(){
     Route::get('users/{id?}', 'APIController@getUsers');
 
     // Secure Get API - Fetch one or more records
-    Route::post('users-list', 'APIController@getUsersList');
+    Route::get('users-list', 'APIController@getUsersList');
 
     // POST API - Add Single users
     Route::post('add-users', 'APIController@addUsers');
@@ -35,6 +35,9 @@ Route::namespace('App\Http\Controllers')->group(function(){
 
     // Login API - Login User and update / return API Token
     Route::post('login-user', 'APIController@loginUser');
+
+    // Logout API - Logout User and Delete API Token
+    Route::post('logout-user', 'APIController@logoutUser');
 
     // POST API - Add multiple users
     Route::post('add-multiple-users', 'APIController@addMultipleUsers');
