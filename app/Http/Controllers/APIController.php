@@ -44,6 +44,7 @@ class APIController extends Controller
         }
     }
 
+
     public function addUsers(Request $request){
         if($request->isMethod('post')){
             $userData = $request->input();
@@ -341,7 +342,7 @@ class APIController extends Controller
                 'users.*.password.required' => 'Password is required'
             ];
 
-            $validator = Validator::make($userData, $rules);
+            $validator = Validator::make($userData, $rules, $customMessages);
             if($validator->fails()){
                 return response()->json($validator->errors(), 422);
             }
