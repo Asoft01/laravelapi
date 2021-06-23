@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Validator;
+use Auth;
 class APIController extends Controller
 {
     //
@@ -146,14 +147,57 @@ class APIController extends Controller
             // Verify the Password
             if(password_verify($userData['password'], $userDetails->password)){
                 // echo "password match.. user can login"; die;
-                $apiToken = Str::random(60);
+                $accessToken = Str::random(60);
 
                 // Update Token
-                User::where('email', $userData['email'])->update(['api_token'=> $apiToken]);
+                User::where('email', $userData['email'])->update(['access_token'=> $accessToken]);
 
-                return response()->json(['status'=> true, "message"=> "User logged in Successfully!", 'token'=> $apiToken], 201);
+                return response()->json(['status'=> true, "message"=> "User logged in Successfully!", 'token'=> $accessToken], 201);
             }else{
                 return response()->json(['status'=> false, "message"=> "Password is Incorrect"], 404);
+            }
+        }
+    }
+
+    public function loginUserWithPassport(Request $request){
+        if($request->isMethod('post')){
+            $userData = $request->input();
+            // echo "<pre>"; print_r($userData); die;
+            
+            $rules = [
+                "email" => "required|email|exists:users", 
+                "password" => "required"
+            ];
+
+            $customMessages = [
+                'email.required' => 'Email is required',
+                'email.email' => 'Valid Email is required',
+                'email.unique' => 'Email does not exists in database', 
+                'password.required' => 'Password is required'
+            ];
+
+            $validator = Validator::make($userData, $rules, $customMessages);
+            if($validator->fails()){
+                return response()->json($validator->errors(), 422);
+            }
+
+            if(Auth::attempt(['email' => $userData['email'], 'password' => $userData['password']])){
+                $user= User::where('email', $userData['email'])->first();
+                // echo "<pre>"; print_r(Auth::user()); die;
+                $authorizationToken = $user->createToken($userData['email'])->accessToken;
+
+                User::where('email', $userData['email'])->update(['access_token' => $authorizationToken]);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'User logged successfully',
+                    'token' => $authorizationToken
+                ], 201);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Email or Password is incorrect!'
+                ], 422);
             }
         }
     }
@@ -164,7 +208,7 @@ class APIController extends Controller
             // echo "<pre>"; print_r($userData); die;
 
             // Generate Unique API / Access Token
-            $apiToken = Str::random(60);
+            $accessToken = Str::random(60);
 
             $rules = [
                 "name" => "required|regex:/^[\pL\s\-]+$/u",
@@ -189,32 +233,89 @@ class APIController extends Controller
             $user->name = $userData['name'];
             $user->email = $userData['email'];
             $user->password = bcrypt($userData['password']);
-            $user->api_token = $apiToken;
+            $user->access_token = $accessToken;
             $user->save();
 
             return response()->json([
                 'status'=> true, 
                 'message'=> 'User Registered Successfully!',
-                'token' => $apiToken
+                'token' => $accessToken
             ], 201);
+        }
+    }
 
+    public function registerUserWithPassport(Request $request){
+        if($request->isMethod('post')){
+            $userData= $request->input();
+            // echo "<pre>"; print_r($userData); die;
+
+            // Generate Unique API / Access Token
+
+            $rules = [
+                "name" => "required|regex:/^[\pL\s\-]+$/u",
+                "email" => "required|email|unique:users", 
+                "password" => "required"
+            ];
+
+            $customMessages = [
+                'name.required'=> 'Name is required',
+                'email.required' => 'Email is required',
+                'email.email' => 'Valid Email is required',
+                'email.unique' => 'Email already exists in database', 
+                'password.required' => 'Password is required'
+            ];
+
+            $validator = Validator::make($userData, $rules, $customMessages);
+            if($validator->fails()){
+                return response()->json($validator->errors(), 422);
+            }
+            
+            // $accessToken = Str::random(60);
+            $user = new User;
+            $user->name = $userData['name'];
+            $user->email = $userData['email'];
+            $user->password = bcrypt($userData['password']);
+            // $user->access_token = $accessToken;
+            $user->save();
+
+            // Attempt to log with the email and password created 
+            if(Auth::attempt(['email' => $userData['email'], 'password' => $userData['password']])){
+                $user = User::where('email', $userData['email'])->first();
+                // echo "<pre>"; print_r(Auth::user()); die;
+
+                // Generate Access Token with Password
+                // echo $accessToken = $user->createToken($userData['email'])->accessToken; die;
+                $accessToken = $user->createToken($userData['email'])->accessToken;
+
+                // Update Access Token in Users Table 
+                User::where('email', $userData['email'])->update(['access_token' => $accessToken]);
+
+                return response()->json([
+                    'status'=> true, 
+                    'message'=> 'User Registered Successfully!',
+                    'token' => $accessToken
+                ], 201);   
+            }else{
+                $message = "Something went wrong! Please try again";
+                return response()->json(['status' => false, 'message' => $message], 422);
+            }
         }
     }
 
     public function logoutUser(Request $request){
-        $api_token = $request->header("Authorization");
-        if(empty($api_token)){
+        $access_token = $request->header("Authorization");
+        if(empty($access_token)){
             $message = "User Token is missing in API Header";
             return response()->json(['status'=> false, 'message'=> $message], 422);
         }else{
             // echo "continue logout api";
-            // echo $api_token  = str_replace("Bearer ", "", $api_token); die;
-            $api_token = str_replace("Bearer ", "", $api_token); 
-            // echo $userCount = User::where('api_token', $api_token)->count(); die;
-            $userCount = User::where('api_token', $api_token)->count(); 
+            // echo $access_token  = str_replace("Bearer ", "", $access_token); die;
+            $access_token = str_replace("Bearer ", "", $access_token); 
+            // echo $userCount = User::where('access_token', $access_token)->count(); die;
+            $userCount = User::where('access_token', $access_token)->count(); 
             if($userCount > 0){
                 // Update User Token to Null
-                User::where('api_token', $api_token)->update(['api_token'=> NULL]);
+                User::where('access_token', $access_token)->update(['access_token'=> NULL]);
                 $message = "User logged out successfully";
                 return response()->json(['status' => true, 'message'=> $message], 200);
             }

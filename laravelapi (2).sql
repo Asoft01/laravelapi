@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2021 at 11:28 AM
+-- Generation Time: Jun 05, 2021 at 09:25 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.11
 
@@ -83,7 +83,7 @@ CREATE TABLE `users` (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `api_token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `api_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -99,8 +99,8 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 (5, 'wale', 'wale@gmail.com', NULL, '$2y$10$t/7vOR0/eJIbcBN9006GeuURJR52ndoUPfL5PhYngCZd6cng9DJia', NULL, '', '2021-05-13 19:27:02', '2021-05-13 19:27:02'),
 (18, 'amit', 'lekhad129@gmail.com', NULL, '$2y$10$4qj4yAXyh9ZyiurT7mV/GOKibqpPuI4vXNVhGGRM.cYsB3sX/Kp1G', NULL, 'zlqkH22Zn7si3bG1DjMlkgTujFm3Q383krwrHPKlW1Uz6ul1hLM4ECUIdn6l', '2021-05-28 03:34:10', '2021-05-30 08:07:52'),
 (19, 'wale', 'walex@gmail.com', NULL, '$2y$10$m6PkUPb4zCtMcZqrJ17UG.Ctq03DCBCazho96HfbiFOM4GzlTpK2e', NULL, 'gpDYY7Ezj6OryjdhtOVEp75JYQ37iTlpfRYLR0rwo4vKbBETsTSjpJv1dxmh', '2021-05-28 03:38:02', '2021-05-28 03:38:02'),
-(20, 'wale', 'walex1@gmail.com', NULL, '$2y$10$sEKnxSMxbr/dxslUtx.iBubCze9bZT5Db07vDpzpR1Yih8fNQRtqm', NULL, 'wUfuDLXCSnqarhQjueSuK4YSuG1p6hI0cFmbxwbIGWDsseCIxPrfGZwL0vlZ', '2021-05-28 03:39:56', '2021-05-28 03:39:56'),
-(21, 'wale', 'walex3@gmail.com', NULL, '$2y$10$ISrNe0c8TFGW1wPWOMwZg.LcB4FDfOUqcqB97Aw0Ndsr3LpGUZct.', NULL, 'JWzuyg57ydLFdoIxNqFtVhjJVCo0LbYSk57tgHrbnIwnuDRGZCt8DqWExoyz', '2021-05-30 07:39:58', '2021-05-30 07:39:58');
+(20, 'wale', 'walex1@gmail.com', NULL, '$2y$10$sEKnxSMxbr/dxslUtx.iBubCze9bZT5Db07vDpzpR1Yih8fNQRtqm', NULL, NULL, '2021-05-28 03:39:56', '2021-06-05 06:20:47'),
+(21, 'wale', 'walex3@gmail.com', NULL, '$2y$10$ISrNe0c8TFGW1wPWOMwZg.LcB4FDfOUqcqB97Aw0Ndsr3LpGUZct.', NULL, NULL, '2021-05-30 07:39:58', '2021-06-05 06:20:28');
 
 --
 -- Indexes for dumped tables

@@ -33,8 +33,14 @@ Route::namespace('App\Http\Controllers')->group(function(){
     // Register API - Register User with API Token
     Route::post('register-user', 'APIController@registerUser');
 
+    // Register API - Register User with Access Token generated with Passports
+    Route::post('register-user-with-passport', 'APIController@registerUserWithPassport');
+
     // Login API - Login User and update / return API Token
     Route::post('login-user', 'APIController@loginUser');
+
+    // Login API - Login User with Passport
+    Route::post('login-user-with-passport', 'APIController@loginUserWithPassport');
 
     // Logout API - Logout User and Delete API Token
     Route::post('logout-user', 'APIController@logoutUser');

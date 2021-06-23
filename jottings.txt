@@ -1,1 +1,40 @@
 php artisan make:seeder insert_records_in_users_table
+
+1. How to use laravel passport
+Install Laravel Passport Package:-
+First of all, install laravel package that will provide full OAuth2 server implementation for our laravel application
+
+run the following command to install : -
+composer require laravel/passport
+
+In case time out error comes then run below command to install :
+COMPOSER_MEMORY_LIMIT = -1 composer require laravel/passport
+
+2. Run migration
+Run migration to create the tables to store clients and access tokens
+
+3. Generate keys:-
+Now run below command to create the encryption keys needed to generate secure access tokens
+php artisan passport: install
+
+4. Update User model
+to add HasApiTokens class as shown in video
+
+<?php 
+    namespace App\Models;
+    use Illuminate\Notifications\Notifiable;
+    use Laravel\Passport\HasApiTokens;
+?>
+
+5. Update AuthServiceProvider.php
+Update AuthServiceProvider.php file located at \app\Providers\folder to use Laravel Passport class and call the Passport route method 
+in boot function
+
+use Laravel\Passport\Passport;
+
+public function boot(){
+Passport::routes();
+}
+
+In auth.php
+'driver' => 'passport',
