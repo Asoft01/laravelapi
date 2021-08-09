@@ -66,6 +66,13 @@ Route::namespace('App\Http\Controllers')->group(function(){
 
     // DELETE API - Delete multiple users with json
     Route::delete('delete-multiple-users-with-json', 'APIController@deleteMultipleUsersWithJson');
+
+    // Post API - Update Stock
+    Route::post('update-stock', 'APIController@updateStock');
+
+    // Webhook POST API
+    Route::post('update-product-stock', 'APIController@updateProductsStock');
+
 });
 
 // Route::get('users', 'App\Http\Controllers\APIController@getUsers');

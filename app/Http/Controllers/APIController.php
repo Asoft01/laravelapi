@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductsAttribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -36,6 +37,7 @@ class APIController extends Controller
         }else{
             if($header == "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFtaXQgR3VwdGEiLCJpYXQiOjE1MTYyMzkwMjJ9.cNrgi6Sso9wvs4GlJmFnA4IqJY4o2QEcKXgshJTjfNg"){
                 $users = User::get();
+                // echo "<pre>"; print_r($users); die;
                 return response()->json(["users"=> $users], 200);
             }else{
                 $message = "Header Authorization is incorrect";
@@ -451,4 +453,121 @@ class APIController extends Controller
             return response()->json(['message'=> 'Users deleted successfully'], 202);
         }
     }
+
+    // public function updateStock(Request $request){
+    //     $header = $request->header('Authorization');
+    //     if(empty($header)){
+    //         $message = "Header Authorization token is missing in API Header";
+    //         return response()->json(['status' => false, 'message'=> $message], 422);
+    //     }else{
+    //        if($header == "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFtaXQgR3VwdGEiLCJpYXQiOjE1MTYyMzkwMjJ9.cNrgi6Sso9wvs4GlJmFnA4IqJY4o2QEcKXgshJTjfNg"){
+    //             // echo "<pre>"; print_r($header); die;
+
+    //             // Update Stock API
+    //             if($request->isMethod('post')){
+    //                 $url = 'http://sitemakers.in/stocks.json';
+    //                 $curl = curl_init();
+    //                 curl_setopt($curl, CURLOPT_URL, $url);
+    //                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    //                 curl_setopt($curl, CURLOPT_HEADER, false);
+
+    //                 $data = curl_exec($curl);
+    //                 curl_close($curl);
+    //                 $data = json_decode($data, true);
+    //                 // echo "<pre>"; print($data); die;
+    //                 foreach($data['items'] as $key => $value){
+    //                     ProductsAttribute::where('sku', $value['sku'])->update(['stock' => $value['stock']]);
+    //                 }
+    //                 $message = "Products Stock updated Successfully";
+    //                 return response()->json(['status' => true, 'message'], 200);
+                    
+    //                 // if($data['items']){
+    //                 //     foreach($data['items'] as $key => $value){
+    //                 //         ProductsAttribute::where('sku', $value['sku'])->update(['stock' => $value['stock']]);
+    //                 //     }
+    //                 //     $message = "Products Stock updated Successfully";
+    //                 //     return response()->json(['status' => true, 'message'], 200);
+    //                 // }else{
+    //                 //     $message = "No Items are found!";
+    //                 //     return response()->json(['status' => true, 'message'], 422);
+    //                 // }
+    //             }
+    //        }else{
+    //            $message= "Header Authorization is incorrect!";
+    //            return response()->json(['status'=> false, 'message' => $message], 422);
+    //        }
+    //     }
+    // }
+
+    public function updateStock(Request $request){
+        $header = $request->header('Authorization');
+        if(empty($header)){
+            $message = "Header Authorization Token is missing API header";
+            return response()->json(['status' => false, 'message' => $message], 422);
+        }else{
+            if($header == "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFtaXQgR3VwdGEiLCJpYXQiOjE1MTYyMzkwMjJ9.cNrgi6Sso9wvs4GlJmFnA4IqJY4o2QEcKXgshJTjfNg"){
+                //  Update Stock API
+                if($request->isMethod('post')){
+                    $url = "http://sitemakers.in/stocks.json";
+                    $curl = curl_init();
+
+                    curl_setopt($curl, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17');
+                    curl_setopt($curl, CURLOPT_URL, $url);
+                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($curl, CURLOPT_HEADER, false);
+                    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+                    $data = curl_exec($curl);
+                    curl_close($curl);
+
+                    $data = json_decode($data, true);
+                    // echo "<pre>"; print_r($data); die;
+                    if(isset($data['items'])){
+                        foreach($data['items'] as $key => $value){
+                            ProductsAttribute::where('sku', $value['sku'])->update(['stock' => $value['stock']]);
+                        }
+                        $message = "Products Stock Updated Successfully";
+                        return response()->json(['status' => true, 'message' => $message], 200);
+                    }else{
+                        $message = "Products No Items are found";
+                        return response()->json(['status' => true, 'message' => $message], 200);
+                    }
+                }
+            }else{
+                $message = "Header Authorization is incorrect!";
+                return response()->json(['status'=> false, 'message' => $message], 422);
+            }
+        }
+    }
+
+
+    public function updateProductsStock(Request $request){
+        $header = $request->header('Authorization');
+        if(empty($header)){
+            $message = "Header Authorization Token is missing API header";
+            return response()->json(['status' => false, 'message' => $message], 422);
+        }else{
+            if($header == "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFtaXQgR3VwdGEiLCJpYXQiOjE1MTYyMzkwMjJ9.cNrgi6Sso9wvs4GlJmFnA4IqJY4o2QEcKXgshJTjfNg"){
+                //  Update Stock API
+                if($request->isMethod('post')){
+                //    echo "test"; die;
+                    $data = $request->all();
+                    // echo "<pre>"; print_r($data); die;
+                    if(isset($data['items'])){
+                        foreach($data['items'] as $key => $value){
+                            ProductsAttribute::where('sku', $value['sku'])->update(['stock'=> $value['stock']]);
+                        }
+                        $message = "Products Updated Successfully!";
+                        return response()->json(['status' => true, 'message' => $message], 200);
+                    }else{
+                        $message = "No Items are found";
+                        return response()->json(['status' => false, 'message' => $message], 422);
+                    }
+                }
+            }else{
+                $message = "Header Authorization is incorrect!";
+                return response()->json(['status'=> false, 'message' => $message], 422);
+            }
+        }
+    }
+
 }
