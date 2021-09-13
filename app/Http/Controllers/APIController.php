@@ -325,6 +325,7 @@ class APIController extends Controller
         }
     }   
 
+    // This works for single and multiple records
     public function addMultipleUsers(Request $request){
         if($request->isMethod('post')){
             $userData = $request->input();
@@ -356,6 +357,7 @@ class APIController extends Controller
                 $user->password = bcrypt($value['password']);
                 $user->save();
             }
+
             return response()->json(['message'=> 'Users added successfully'], 201);
         }
     }
@@ -569,5 +571,4 @@ class APIController extends Controller
             }
         }
     }
-
 }

@@ -19,6 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Route::get('user/{id?}', 'App\Http\Controllers\APIController@getUsers');
+// Route::post('add-users', 'App\Http\Controllers\APIController@addUsers');
+
 Route::namespace('App\Http\Controllers')->group(function(){
 
     // GET API - Fetch one or more records
